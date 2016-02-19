@@ -11,8 +11,12 @@ export default class Notifications extends Component {
     this.props.registerListeners();
   }
 
+  componentWillReceiveProps(){
+    this.props.registerListeners();
+  }
+
   componentWillUnmount(){
-    //this.props.unregisterListeners();
+    this.props.unregisterListeners();
   }
 
   render() {
