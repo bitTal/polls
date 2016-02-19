@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
-
+import { registerListeners, unregisterListeners } from '../actions/notify';
 import Notifications from '../components/Notifications';
+
 
 function mapStateToProps(state) {
   return {
@@ -9,8 +10,10 @@ function mapStateToProps(state) {
   };
 }
 
-function mapActionsToProps() {
+function mapActionsToProps(dispatch) {
   return {
+	registerListeners: () => dispatch(registerListeners()),
+	unregisterListeners: () => dispatch(unregisterListeners())
   };
 }
 

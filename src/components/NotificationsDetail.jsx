@@ -12,6 +12,10 @@ export default class NotificationsDetail extends Component {
     };
   }
 
+  componentWillMount(){
+    this.props.registerListeners();
+  }
+
   handleRemoveButtonClick(index) {
     this.props.onRemoveNotificationClick(index);
   }
@@ -35,7 +39,7 @@ export default class NotificationsDetail extends Component {
     return (
       <div className="col-md-6">
         { noMessages }
-        { messages.slice(0, maxMessages).map( (message, index) => <NotificationItem key={message.id} index={index} message={message} onRemoveNotificationClick={onRemoveNotificationClick} onShowMessage={onShowMessage}/> ) }
+        { messages.slice(0, maxMessages).map( (message, index) => <NotificationItem key={message.id} index={index} id={message.id} message={message} onRemoveNotificationClick={onRemoveNotificationClick} onShowMessage={onShowMessage}/> ) }
         { loadMore }
         { clean }
       </div>
@@ -47,7 +51,9 @@ NotificationsDetail.propTypes = {
   messages: PropTypes.array,
   onRemoveNotificationClick: PropTypes.func.isRequired,
   onRemoveAllNotificationsClick: PropTypes.func.isRequired,
-  onShowMessage: PropTypes.func.isRequired
+  onShowMessage: PropTypes.func.isRequired,
+  registerListeners: PropTypes.func.isRequired,
+
  };
 
  NotificationsDetail.defaultProps = {
