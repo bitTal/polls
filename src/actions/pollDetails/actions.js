@@ -53,7 +53,7 @@ export function removeEntry(idPoll, idEntry) {
 
 export function voteEntry(idPoll, idEntry) {
   return (dispatch, getState) => {
-    const { firebase } = getState();
+    const { firebase, auth } = getState();
     firebase.child(`polls/${idPoll}/entries/${idEntry}/votes`)
       .transaction(votes => votes + 1, error => {
         if (error) {
@@ -61,8 +61,14 @@ export function voteEntry(idPoll, idEntry) {
           dispatch({
             type: UPDATE_POLL_ERROR,
             payload: error,
-        });
-      }
+          });
+        }
+        /*else add user to voters***************************************************************************/
+         else {
+          firebase.child(`polls/${idPoll}/voters`).transaction(voters => {
+            return (voters) ? voters.concat([auth.id]) : [auth.id];
+          });
+        }
     });
   };
 }

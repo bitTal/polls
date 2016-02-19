@@ -12,7 +12,9 @@ export default class PollVote extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { loading: true };
+    this.state = {
+      loading: true
+    };
   }
 
   componentWillMount() {
@@ -46,7 +48,8 @@ export default class PollVote extends Component {
   }
 
   render() {
-    const { poll } = this.props;
+    /* auth********************************/
+    const { poll, auth } = this.props;
     const entries = poll.entries || {};
     const total = this.totalVotes(entries);
     const contents = this.state.loading ? <Spinner /> : <div>
@@ -64,7 +67,16 @@ export default class PollVote extends Component {
                   Object.keys(entries).map( (id, index) =>
                     <li className="list-group-item" key={index}>
                       { entries[id].title }
-                      <span onClick={ () => this.handleVoteClick(poll.id, id) } className="action-element glyphicon glyphicon-arrow-up"/>
+                    {/********************************************************************/}
+                      {(!auth.id)
+                        ? ''
+                        : (poll.voters)
+                          ? poll.voters.indexOf(auth.id) !== -1
+                            ? ''
+                            : <span onClick={ () => this.handleVoteClick(poll.id, id) } className="voteEntry action-element glyphicon glyphicon-arrow-up"/>
+                          : <span onClick={ () => this.handleVoteClick(poll.id, id) } className="voteEntry action-element glyphicon glyphicon-arrow-up"/>
+                      }
+                      {/**********************************************************************/}
                       <br/>
                       { this.createProgressBar(entries[id], total, index) }
                     </li>
@@ -83,6 +95,7 @@ export default class PollVote extends Component {
 
 PollVote.propTypes = {
   poll: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired,
   voteEntry: PropTypes.func.isRequired,
   params: PropTypes.object.isRequired,
   registerListeners: PropTypes.func.isRequired,
