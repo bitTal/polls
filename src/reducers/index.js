@@ -8,6 +8,8 @@ import actionsPending from './confirm';
 import menu from './menu';
 import firebase from './firebase';
 import auth from './auth';
+import metadata from './metadata';
+
 
 const pollApp = combineReducers({
   auth,
@@ -18,7 +20,8 @@ const pollApp = combineReducers({
   messages,
   actionsPending,
   menu,
-  firebase
+  firebase,
+  metadata
 });
 
 export default pollApp;

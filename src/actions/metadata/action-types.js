@@ -1,0 +1,3 @@
+export const SET_METADATA = "SET_METADATA";
+export const REMOVE_METADATA = "REMOVE_METADATA";
+

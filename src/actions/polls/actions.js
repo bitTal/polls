@@ -25,6 +25,9 @@ export function addPoll(title) {
       } else {
         const pollId = newPollRef.key();
         const userId = auth.id;
+        /************************************************************************/
+        dispatch({type: "SET_METADATA", metadata: {text:'Poll ' + title + ' added', type: 'alert alert-success'}});
+        /************************************************************************/
         firebase.child(`myPolls/${userId}/${pollId}`).set({ createdAt: Firebase.ServerValue.TIMESTAMP });
       }
     });
@@ -46,6 +49,9 @@ export function removePoll(pollId, pollTitle) {
           } else {
             const userId = auth.id;
             firebase.child(`myPolls/${userId}/${pollId}`).remove();
+            /************************************************************************/
+            dispatch({type: "SET_METADATA", metadata: {text: ' Poll ' + pollTitle + ' removed', type: 'alert alert-danger'}});
+            /************************************************************************/
           }
         });
     }));
