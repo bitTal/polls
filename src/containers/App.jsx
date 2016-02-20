@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import MenuContainer from './MenuContainer';
 import ConfirmDialogContainer from './ConfirmDialogContainer';
 import { connect } from 'react-redux';
+import * as authActions from '../actions/auth';
+import Login from '../components/Login';
 
 class App extends Component {
 
@@ -13,13 +15,18 @@ class App extends Component {
     const { children } = this.props;
     return (
       <div>
-        <div className="row">
-          <MenuContainer />
-          <div>
-            <ConfirmDialogContainer/>
-          </div>
-        </div>
-        {children}
+        {(this.props.auth.authenticated)
+          ? <div>
+              <div className="row">
+                <MenuContainer />
+                <div>
+                  <ConfirmDialogContainer/>
+                </div>
+              </div>
+              {children}
+            </div>
+          : <Login {...this.props}/>
+        }
       </div>
     );
   }
@@ -28,10 +35,14 @@ class App extends Component {
 App.propTypes = {
   // Injected by React RouterConfirmDialog
   children: PropTypes.node,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
+  auth: PropTypes.object
+
 };
 
 export default connect(
   state => ({
     auth: state.auth
-  }))(App);
+  }),
+  authActions
+  )(App);

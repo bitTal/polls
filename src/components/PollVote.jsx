@@ -67,7 +67,7 @@ export default class PollVote extends Component {
                   Object.keys(entries).map( (id, index) =>
                     <li className="list-group-item" key={index}>
                       { entries[id].title }
-                    {/********************************************************************/}
+                    {/* cambiar '' por el span ************************************************/}
                       {(!auth.id)
                         ? ''
                         : (poll.voters)
