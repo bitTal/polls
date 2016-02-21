@@ -119,5 +119,5 @@ PollVote.propTypes = {
   params: PropTypes.object.isRequired,
   registerListeners: PropTypes.func.isRequired,
   unregisterListeners: PropTypes.func.isRequired,
-  canVote: PropTypes.func
+  canVotePoll: PropTypes.func
  };

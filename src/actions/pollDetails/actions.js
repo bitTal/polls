@@ -2,6 +2,8 @@ import Firebase from 'firebase';
 import {
   UPDATE_POLL_ERROR
 } from './action-types';
+/*****************************************************/
+import { addNotification } from '../notify';
 
 export function editPollTitle(idPoll, title) {
   return (dispatch, getState) => {
@@ -92,11 +94,28 @@ export function voteEntry(idPoll, idEntry) {
 }
 
 /* Edit poll vote **************************************************************************/
-export function canVotePoll(pollId, canVote){
+export function canVotePoll(idPoll, canVote){
   return (dispatch, getState) => {
     const { firebase } = getState();
-    firebase.child(`polls/${pollId}/canVote`).set(canVote, error => {
+    firebase.child(`polls/${idPoll}/canVote`).set(canVote, error => {
       if (error) console.log('Error, vote option not changed.');
+    });
+  };
+}
+
+
+/* Edit entry title **********************************************************************/
+export function editEntryTitle(idPoll, idEntry, title){
+  return (dispatch, getState) => {
+    const { firebase } = getState();
+    firebase.child(`polls/${idPoll}/entries/${idEntry}/title`).set(title, error => {
+      if (error) console.log('Error in changing entry title.');
+      else {
+        /************************************************************************/
+        dispatch({type: "SET_METADATA", metadata: {text: title + ' entry title chagend', type: 'alert alert-info'}});
+        dispatch(addNotification('Entry title chagend'));
+        /************************************************************************/
+      }
     });
   };
 }

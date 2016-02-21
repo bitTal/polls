@@ -4,6 +4,10 @@ export default class EntryList extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      editing: false,
+      idEntry: ''
+    };
   }
 
   handleAddButtonClick() {
@@ -18,6 +22,35 @@ export default class EntryList extends Component {
     this.props.removeEntry(idPoll, idEntry);
   }
 
+/*******************************************************************/
+  handleEditClick(idEntry) {
+    const title = document.getElementById('input-' + idEntry);
+    this.setState({
+      editing: true,
+      idEntry
+    });
+    title.value = this.props.poll.entries[idEntry].title;
+    setTimeout(() => title.focus(), 0);
+    setTimeout(() => title.setSelectionRange(0, title.value.length), 0);
+  }
+
+  handleCancelClick() {
+    this.setState({
+      editing: false,
+      idEntry: ''
+    });
+  }
+
+  handleOkClick() {
+    const idEntry = this.state.idEntry;
+    const newTitle = document.getElementById('input-' + idEntry).value.trim();
+    this.setState({
+      editing: false
+    });
+    this.props.editEntryTitle(this.props.poll.id, idEntry, newTitle);
+  }
+
+
   render() {
     const { poll } = this.props;
     const entries = poll.entries || {};
@@ -28,11 +61,21 @@ export default class EntryList extends Component {
           <ul className="list-group">
             {
               Object.keys(entries).map( (id, index) =>
-                <li style={{height: '55px'}} className="list-group-item" key={index}>{entries[id].title}
-                  <button onClick={() => this.handleRemoveButtonClick(poll.id, id)} className="btn btn-warning pull-right">
-                    <span className="glyphicon glyphicon-trash"/>
-                  </button>
-                </li> )
+                <div key={index}>
+                  <li style={{height: '55px'}} className={`list-group-item ${this.state.editing && this.state.idEntry === id ? 'hidden' : ''}`} key={index}>{entries[id].title}
+                    <span style={{'marginLeft': '20px'}} className="btn glyphicon glyphicon-edit" onClick={ () => this.handleEditClick(id) }/>
+                    <button onClick={() => this.handleRemoveButtonClick(poll.id, id)} className="btn btn-warning pull-right">
+                      <span className="glyphicon glyphicon-trash"/>
+                    </button>
+                  </li>
+                  <div className={`input-group ${this.state.editing && this.state.idEntry === id ? '' : 'hidden'}`}>
+                    <input className="form-control" id={'input-' + id}/>
+                    <span className="input-group-btn">
+                      <button className="btn btn-danger" type="button" onClick={e => this.handleCancelClick(e)}><span className="glyphicon glyphicon-remove" /></button>
+                      <button className="btn btn-success" type="button" onClick={e => this.handleOkClick(e)}><span className="glyphicon glyphicon-ok" /></button>
+                    </span>
+                  </div>
+                </div>)
             }
          </ul>
           <div className="input-group">
@@ -49,7 +92,8 @@ export default class EntryList extends Component {
 EntryList.propTypes = {
   poll: PropTypes.object.isRequired,
   addEntry: PropTypes.func.isRequired,
-  removeEntry: PropTypes.func.isRequired
+  removeEntry: PropTypes.func.isRequired,
+  editEntryTitle: PropTypes.func
 };
 
 EntryList.defaultProps = {
