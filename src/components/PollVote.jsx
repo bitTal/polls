@@ -47,6 +47,12 @@ export default class PollVote extends Component {
     );
   }
 
+/* Enable can Vote***********************************************************************/
+  hanldeSwitchCanVote(pollId, canVote){
+    this.props.canVotePoll(pollId, canVote);
+  }
+  /**********************************************************************/
+
   render() {
     /* auth********************************/
     const { poll, auth } = this.props;
@@ -59,6 +65,17 @@ export default class PollVote extends Component {
                 Poll: { poll.title }
               </div>
             </h4>
+
+            <div className="btn-group">
+              <button type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                 {poll.canVote ? 'Enabled' : 'Disabled'}<span className="caret"></span>
+              </button>
+              <ul className="dropdown-menu">
+                <li><a href="#" onClick={() => this.hanldeSwitchCanVote(poll.id, true)}>Enable</a></li>
+                <li><a href="#" onClick={() => this.hanldeSwitchCanVote(poll.id, false)}>Disable</a></li>
+              </ul>
+            </div>
+
              </div>
             <div className="panel-body">
               <h4>Entries</h4>
@@ -67,14 +84,16 @@ export default class PollVote extends Component {
                   Object.keys(entries).map( (id, index) =>
                     <li className="list-group-item" key={index}>
                       { entries[id].title }
-                    {/* cambiar '' por el span ************************************************/}
-                      {(!auth.id)
-                        ? ''
-                        : (poll.voters)
-                          ? poll.voters.indexOf(auth.id) !== -1
-                            ? ''
+                      {/* cambiar '' por el span ************************************************/}
+                      {
+                        (poll.canVote)
+                        //(!auth.id)
+                          ? (poll.voters)
+                            ? poll.voters.indexOf(auth.id) !== -1
+                              ? ''
+                              : <span onClick={ () => this.handleVoteClick(poll.id, id) } className="voteEntry action-element glyphicon glyphicon-arrow-up"/>
                             : <span onClick={ () => this.handleVoteClick(poll.id, id) } className="voteEntry action-element glyphicon glyphicon-arrow-up"/>
-                          : <span onClick={ () => this.handleVoteClick(poll.id, id) } className="voteEntry action-element glyphicon glyphicon-arrow-up"/>
+                          : ''
                       }
                       {/**********************************************************************/}
                       <br/>
@@ -99,5 +118,6 @@ PollVote.propTypes = {
   voteEntry: PropTypes.func.isRequired,
   params: PropTypes.object.isRequired,
   registerListeners: PropTypes.func.isRequired,
-  unregisterListeners: PropTypes.func.isRequired
+  unregisterListeners: PropTypes.func.isRequired,
+  canVote: PropTypes.func
  };

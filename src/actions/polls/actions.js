@@ -15,7 +15,7 @@ export function addPoll(title) {
   return (dispatch, getState) => {
     const { firebase, auth } = getState();
     const newPollRef = firebase.child('polls')
-      .push({ title, createdAt: Firebase.ServerValue.TIMESTAMP }, error => {
+      .push({ title, createdAt: Firebase.ServerValue.TIMESTAMP, canVote: true }, error => {
         if (error) {
           console.error('ERROR @ addPoll :', error); // eslint-disable-line no-console
           dispatch({
@@ -57,4 +57,13 @@ export function removePoll(pollId, pollTitle) {
     }));
   };
 }
+
+/*export function canVotePoll(pollId, canVote){
+  return (dispatch, getState) => {
+    const { firebase, auth } = getState();
+    firebase.child(`polls/${pollId}/canVote`).set(canVote, error => {
+      if (error) console.log('Error, vote option not changed.');
+    });
+  };
+}*/
 

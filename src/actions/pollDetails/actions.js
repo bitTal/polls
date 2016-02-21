@@ -90,3 +90,13 @@ export function voteEntry(idPoll, idEntry) {
     });
   };
 }
+
+/* Edit poll vote **************************************************************************/
+export function canVotePoll(pollId, canVote){
+  return (dispatch, getState) => {
+    const { firebase } = getState();
+    firebase.child(`polls/${pollId}/canVote`).set(canVote, error => {
+      if (error) console.log('Error, vote option not changed.');
+    });
+  };
+}
