@@ -12,7 +12,11 @@ export function pollSearch(startAt) {
    const ref = firebase.child('polls');
    ref.orderByChild('title').startAt(startAt).endAt(`${startAt}\uf8ff`).once('value', snapshot => dispatch({
      type: SET_POLL_SEARCH,
-     polls: Object.keys(snapshot.val() || []).map( id => ({id, title:snapshot.val()[id].title}) )
+     polls: Object.keys(snapshot.val() || []).map( id => ({id, title:snapshot.val()[id].title})).sort(function(a, b){
+        if ( a.title > b.title ) return 1;
+        else if ( a.title < b.title ) return -1;
+        else return 0;
+     })
    }));
   };
 }
@@ -24,3 +28,11 @@ export function resetPollSearch() {
     });
   };
 }
+
+/*Order search polls by title**************************************/
+
+/*.sort(function(a, b){
+        if(a.title > b.title) return 1;
+        else if(a.title < b.title) return -1;
+        else return 0;
+     })*/
