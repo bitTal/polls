@@ -16,7 +16,6 @@ export function setNotifications(notifications){
   };
 }
 
-
 export function addNotification(text, level = NotifyLevels.INFO) {
   return (dispatch, getState) => {
     const { firebase, auth } = getState();
@@ -29,15 +28,26 @@ export function addNotification(text, level = NotifyLevels.INFO) {
         pending: true,
         isNew: true
       }];
-    firebase.child(`myNotifications/${auth.id}`).transaction(notifications => {
+    new Promise(resolve => {
+      firebase.child(`myNotifications/${auth.id}`).once('value', snap => {
+        resolve(snap.val());
+      });
+    }).then(notifications => {
+      const nots = notifications ? notif.concat(notifications) : notif;
+      firebase.child(`myNotifications/${auth.id}`).set(nots);
+    }).then(() => dispatch(registerListeners()), () => console.log('Error add notif'));
+  };
+}
+
+
+/*TRansaction error *************************************************************/
+/*firebase.child(`myNotifications/${auth.id}`).transaction(notifications => {
       return notifications ? notifications.concat(notif) : notif;
     }, error => {
       if (error) console.log('Error add notif');
       else dispatch(registerListeners());
-    });
-  };
-}
-
+    });*/
+/**************************************************************/
 
 /*export function addNotification(text, level = NotifyLevels.INFO) {
   return { type: ADD_NOTIFICATION, notification:
@@ -55,14 +65,34 @@ export function addNotification(text, level = NotifyLevels.INFO) {
 export function setNotificationAsReaded(index) {
    return (dispatch, getState) => {
     const { firebase, auth } = getState();
-    firebase.child(`myNotifications/${auth.id}`).transaction(notifications => {
+    firebase.child(`myNotifications/${auth.id}`).once('value', snap => {
+      const nots = snap.val().map( (message, i) => i !== index ? message : Object.assign({}, message, message.pending ? {pending: false} : {isNew: false}));
+      firebase.child(`myNotifications/${auth.id}`).set(nots, error => {
+        if (error) console.log('Error set as rea.');
+        else dispatch(registerListeners());
+      });
+    });
+  };
+}
+
+/*Prosises work wrong*********************/
+    /*new Promise(resolve => {
+      firebase.child(`myNotifications/${auth.id}`).once('value', snap => {debugger;
+        resolve(snap.val());
+      });
+    }).then(notifications => {debugger;
+      const nots = notifications.map( (message, i) => i !== index ? message : Object.assign({}, message, message.pending ? {pending: false} : {isNew: false}));
+      firebase.child(`myNotifications/${auth.id}`).set(nots);
+    }).then(() => dispatch(registerListeners()), () => console.log('Error set as read.'));*/
+
+
+    /*firebase.child(`myNotifications/${auth.id}`).transaction(notifications => {
       return notifications.map( (message, i) => i !== index ? message : Object.assign({}, message, message.pending ? {pending: false} : {isNew: false}));
     }, error => {
       if (error) console.log('Error');
       else dispatch(registerListeners());
-    });
-  };
-}
+    });*/
+  /************************************
 
 /*export function setNotificationAsReaded(index) {
   return { type: SET_NOTIFICATION_AS_READED, index };
@@ -71,15 +101,28 @@ export function setNotificationAsReaded(index) {
 export function removeNotification(index) {
   return (dispatch, getState) => {
     const { firebase, auth } = getState();
-    firebase.child(`myNotifications/${auth.id}`).transaction(notifications => {
-      return notifications.filter( (message, i) => i !== index );
-    }, error => {
-      if (error) console.log('error rm notif');
-      else dispatch(registerListeners());
+    new Promise(resolve => {
+      firebase.child(`myNotifications/${auth.id}`).once('value', snap => {
+        resolve(snap.val());
+      });
+    }).then(notifications => {
+      const notifs = notifications.filter( (message, i) => i !== index );
+      firebase.child(`myNotifications/${auth.id}`).set(notifs, error => {
+        if (error) console.log('error rm notif');
+        else dispatch(registerListeners());
+      });
     });
   };
 }
 
+/* Transaction error ************************************************/
+ /*firebase.child(`myNotifications/${auth.id}`).transaction(notifications => {
+      return notifications.filter( (message, i) => i !== index );
+    }, error => {
+      if (error) console.log('error rm notif');
+      else dispatch(registerListeners());
+    });*/
+/***********************************************/
 
 /*export function removeNotification(index) {
   return { type: REMOVE_NOTIFICATION, index };

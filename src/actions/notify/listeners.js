@@ -5,7 +5,7 @@ export function registerListeners() {
     const { firebase, auth } = getState();
     new Promise(resolve => {
 		firebase.child(`myNotifications/${auth.id}`).on('value', snapshot => {
-			resolve(snapshot.val() ? snapshot.val().reverse() : []);
+			resolve(snapshot.val() ? snapshot.val() : []);
 		});
     }).then(notifications => dispatch({type: SET_NOTIFICATIONS, notifications}));
   };
@@ -14,8 +14,7 @@ export function registerListeners() {
 export function unregisterListeners() {
   return (dispatch, getState) => {
     const { firebase, auth } = getState();
-    const userId = auth.id;
-    const ref = firebase.child(`myNotifications/${userId}`);
+    const ref = firebase.child(`myNotifications/${auth.id}`);
     ref.off();
     dispatch({
       type: SET_NOTIFICATIONS,
