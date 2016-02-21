@@ -11,7 +11,9 @@ export default class MenuItem extends Component {
     const { href, children, active } = this.props;
 
     return (
-      <li className={ new RegExp('^' + href + '/?').test(active) && 'active' }><Link to={href}>{ children }</Link></li>
+      <li className={ new RegExp('^' + href + '/?').test(active) && 'active' }>
+        <Link to={href}>{ children }</Link>
+      </li>
     );
   }
 }
@@ -22,3 +24,6 @@ MenuItem.propTypes = {
   active: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired
 };
+
+
+{/*className={ new RegExp('^' + href + '/?').test(active) && 'active' }*/}

@@ -32,14 +32,15 @@ class Menu extends Component {
           </div>
           <div id="navbar" className="navbar-collapse collapse">
             <ul className="nav navbar-nav">
+              { auth.authenticated ? <MenuItem href="/account" { ...this.props }>Account</MenuItem> : ''}
               { auth.authenticated ? <MenuItem href="/poll" { ...this.props }>My Polls</MenuItem> : null }
               <MenuItem href="/vote" { ...this.props }>Vote</MenuItem>
             </ul>
             <ul className="nav navbar-nav navbar-right">
               <NotificationsContainer { ...this.props } />
-              { auth.authenticated ?
-                <li className="navbar-btn"><button className="btn" type="button" onClick={ () => this.handleSignOutClick() }>Sign Out</button></li> :
-                <MenuItem href="/sign-in" { ...this.props }>Sign In</MenuItem>
+              { auth.authenticated 
+                ? <li onClick={() => this.handleSignOutClick()}><Link to="/">Sign Out</Link></li>
+                : <MenuItem href="/sign-in" { ...this.props }>Sign In</MenuItem>
               }
             </ul>
           </div>
